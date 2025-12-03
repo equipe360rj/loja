@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva de Kits - Games e Karaokê</title>
+    <style>
+        /* ESTILO (CSS) */
+        :root {
+            --primary: #25D366; /* Verde WhatsApp */
+            --dark: #075E54;
+            --bg: #f4f4f4;
+            --card-bg: #ffffff;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 0; padding-bottom: 80px;}
+        header { background-color: var(--dark); color: white; text-align: center; padding: 1rem; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        
+        /* Grid de Produtos */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .product-card { background: var(--card-bg); border-radius: 10px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-img { width: 100%; height: 150px; background-color: #ddd; border-radius: 5px; object-fit: cover; margin-bottom: 10px; }
+        .price { font-size: 1.2rem; color: var(--dark); font-weight: bold; }
+        .btn-add { background-color: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        .btn-add:hover { background-color: #128C7E; }
+
+        /* Carrinho Flutuante */
+        .cart-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #ccc; padding: 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
+        .cart-info { font-weight: bold; margin-left: 20px; }
+        .btn-checkout { background-color: var(--dark); color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-right: 20px; }
+        
+        /* Modal de Checkout */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 2000; }
+        .modal-content { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        .cart-items-list { list-style: none; padding: 0; margin: 10px 0; border-bottom: 1px solid #eee; }
+        .cart-items-list li { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .btn-whatsapp { background-color: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .close-modal { float: right; cursor: pointer; font-size: 1.5rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Locação de Games e Karaokê</h1>
+    <p>Monte seu kit para festa</p>
+</header>
+
+<div class="container">
+    <div class="products-grid" id="products-container">
+        </div>
+</div>
+
+<div class="cart-bar">
+    <div class="cart-info">
+        Total: <span id="cart-total">R$ 0,00</span> <br>
+        <small id="cart-count">0 itens</small>
+    </div>
+    <button class="btn-checkout" onclick="openCheckout()">Finalizar Pedido</button>
+</div>
+
+<div class="modal" id="checkout-modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeCheckout()">&times;</span>
+        <h2>Resumo do Pedido</h2>
+        <ul class="cart-items-list" id="modal-cart-list"></ul>
+        <h3 style="text-align: right;">Total: <span id="modal-total">R$ 0,00</span></h3>
+        
+        <hr>
+        <div class="form-group">
+            <label>Seu Nome:</label>
+            <input type="text" id="client-name" placeholder="Ex: João Silva">
+        </div>
+        <div class="form-group">
+            <label>Data do Evento:</label>
+            <input type="date" id="event-date">
+        </div>
+        <div class="form-group">
+            <label>Endereço / Obs:</label>
+            <textarea id="client-obs" placeholder="Rua X, Bairro Y..."></textarea>
+        </div>
+        
+        <button class="btn-whatsapp" onclick="sendToWhatsapp()">Enviar Pedido no WhatsApp</button>
+    </div>
+</div>
+
+<script>
+    // --- CONFIGURAÇÃO ---
+    // COLOQUE SEU NÚMERO AQUI (formato internacional sem +)
+    const PHONE_NUMBER = "5521999999999"; 
+    
+    // SEUS PRODUTOS
+    const products = [
+        { id: 1, name: "Kit Karaokê Básico (Sem TV)", price: 250.00, img: "https://via.placeholder.com/300?text=Kit+Base" },
+        { id: 2, name: "Kit Game Retro (Sem TV)", price: 200.00, img: "https://via.placeholder.com/300?text=Kit+Game" },
+        { id: 3, name: "Adicional: TV 42 Polegadas", price: 100.00, img: "https://via.placeholder.com/300?text=TV+42" },
+        { id: 4, name: "Adicional: Caixa de Som", price: 80.00, img: "https://via.placeholder.com/300?text=Caixa+Som" },
+        { id: 5, name: "Adicional: Iluminação", price: 50.00, img: "https://via.placeholder.com/300?text=Luzes" }
+    ];
+
+    let cart = [];
+
+    // Renderizar Produtos
+    const container = document.getElementById('products-container');
+    products.forEach(p => {
+        container.innerHTML += `
+            <div class="product-card">
+                <img src="${p.img}" class="product-img" alt="${p.name}">
+                <h3>${p.name}</h3>
+                <p class="price">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
+                <button class="btn-add" onclick="addToCart(${p.id})">Adicionar ao Kit</button>
+            </div>
+        `;
+    });
+
+    // Adicionar ao Carrinho
+    function addToCart(id) {
+        const product = products.find(p => p.id === id);
+        cart.push(product);
+        updateCartUI();
+    }
+
+    // Atualizar Interface do Carrinho
+    function updateCartUI() {
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        document.getElementById('cart-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        document.getElementById('cart-count').innerText = `${cart.length} itens`;
+        
+        // Atualiza lista do modal
+        const list = document.getElementById('modal-cart-list');
+        list.innerHTML = '';
+        cart.forEach((item, index) => {
+            list.innerHTML += `<li>${item.name} <span>R$ ${item.price.toFixed(2)}</span> <span style="color:red; cursor:pointer;" onclick="removeItem(${index})">(x)</span></li>`;
+        });
+        document.getElementById('modal-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+    }
+
+    // Remover Item
+    function removeItem(index) {
+        cart.splice(index, 1);
+        updateCartUI();
+    }
+
+    // Controle do Modal
+    function openCheckout() {
+        if(cart.length === 0) { alert("Seu carrinho está vazio!"); return; }
+        document.getElementById('checkout-modal').style.display = 'flex';
+    }
+    function closeCheckout() {
+        document.getElementById('checkout-modal').style.display = 'none';
+    }
+
+    // Enviar para WhatsApp
+    function sendToWhatsapp() {
+        const name = document.getElementById('client-name').value;
+        const date = document.getElementById('event-date').value;
+        const obs = document.getElementById('client-obs').value;
+
+        if(!name || !date) { alert("Por favor, preencha nome e data."); return; }
+
+        let message = `*NOVO PEDIDO DE LOCAÇÃO*\n\n`;
+        message += `*Cliente:* ${name}\n`;
+        message += `*Data do Evento:* ${date.split('-').reverse().join('/')}\n`;
+        message += `*Obs/Endereço:* ${obs}\n\n`;
+        message += `*ITENS ESCOLHIDOS:*\n`;
+        
+        cart.forEach(item => {
+            message += `- ${item.name}: R$ ${item.price.toFixed(2)}\n`;
+        });
+
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        message += `\n*VALOR TOTAL ESTIMADO: R$ ${total.toFixed(2)}*`;
+
+        const url = `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    }
+</script>
+
+</body>
+</html>
