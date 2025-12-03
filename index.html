@@ -3,181 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reserva de Kits - Games e Karaokê</title>
+    <title>Equipe 360 RJ | Reservas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* ESTILO (CSS) */
+        /* --- ESTILO V2.0 --- */
         :root {
-            --primary: #25D366; /* Verde WhatsApp */
-            --dark: #075E54;
-            --bg: #f4f4f4;
-            --card-bg: #ffffff;
+            --primary: #25D366; /* Verde Zap */
+            --accent: #0056b3;  /* Azul Profissional */
+            --dark: #222;
+            --bg: #f8f9fa;
+            --white: #ffffff;
         }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 0; padding-bottom: 80px;}
-        header { background-color: var(--dark); color: white; text-align: center; padding: 1rem; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
         
-        /* Grid de Produtos */
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .product-card { background: var(--card-bg); border-radius: 10px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; transition: transform 0.2s; }
-        .product-card:hover { transform: translateY(-5px); }
-        .product-img { width: 100%; height: 150px; background-color: #ddd; border-radius: 5px; object-fit: cover; margin-bottom: 10px; }
-        .price { font-size: 1.2rem; color: var(--dark); font-weight: bold; }
-        .btn-add { background-color: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
-        .btn-add:hover { background-color: #128C7E; }
+        body { font-family: 'Roboto', sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 100px; color: #333; }
+        
+        /* Hero Section (Topo) */
+        .hero {
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent);
+        }
+        .hero h1 { margin: 0; font-size: 2rem; }
+        .hero p { opacity: 0.8; margin-top: 5px; }
+        
+        .container { max-width: 1000px; margin: -30px auto 0; padding: 20px; }
+        
+        /* Cards */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .product-card { 
+            background: var(--white); 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        
+        .product-img-container { height: 180px; overflow: hidden; background: #eee; position: relative; }
+        .product-img { width: 100%; height: 100%; object-fit: cover; }
+        .card-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; }
+        .card-desc { font-size: 0.9rem; color: #666; margin-bottom: 15px; flex-grow: 1; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 10px; }
+        .price { font-size: 1.2rem; font-weight: bold; color: var(--accent); }
+        
+        /* Controles de Quantidade */
+        .qty-control { display: flex; align-items: center; gap: 10px; background: #f0f0f0; padding: 5px; border-radius: 20px; }
+        .btn-qty { 
+            width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer; 
+            font-weight: bold; color: white; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-minus { background-color: #ff6b6b; }
+        .btn-plus { background-color: var(--primary); }
+        .qty-display { font-weight: bold; width: 20px; text-align: center; }
 
-        /* Carrinho Flutuante */
-        .cart-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #ccc; padding: 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
-        .cart-info { font-weight: bold; margin-left: 20px; }
-        .btn-checkout { background-color: var(--dark); color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-right: 20px; }
-        
-        /* Modal de Checkout */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 2000; }
-        .modal-content { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
+        /* Barra Inferior */
+        .cart-bar { 
+            position: fixed; bottom: 0; left: 0; width: 100%; 
+            background: white; border-top: 1px solid #ddd; 
+            padding: 15px 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); 
+            display: flex; justify-content: space-between; align-items: center; 
+            z-index: 1000; box-sizing: border-box;
+        }
+        .btn-checkout { 
+            background-color: var(--accent); color: white; 
+            padding: 12px 25px; border: none; border-radius: 50px; 
+            font-weight: bold; cursor: pointer; font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(0,86,179,0.3);
+        }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(3px); }
+        .modal-content { background: white; padding: 25px; border-radius: 15px; width: 90%; max-width: 450px; position: relative; max-height: 90vh; overflow-y: auto; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        .cart-items-list { list-style: none; padding: 0; margin: 10px 0; border-bottom: 1px solid #eee; }
-        .cart-items-list li { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .btn-whatsapp { background-color: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1rem; }
-        .close-modal { float: right; cursor: pointer; font-size: 1.5rem; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+        .btn-whatsapp { background-color: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #999; }
+        
+        .cart-summary li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Locação de Games e Karaokê</h1>
-    <p>Monte seu kit para festa</p>
-</header>
+<div class="hero">
+    <h1>Equipe 360 RJ</h1>
+    <p>Monte seu kit de diversão para o evento</p>
+</div>
 
 <div class="container">
     <div class="products-grid" id="products-container">
         </div>
 </div>
 
-<div class="cart-bar">
-    <div class="cart-info">
-        Total: <span id="cart-total">R$ 0,00</span> <br>
-        <small id="cart-count">0 itens</small>
+<div class="cart-bar" id="cart-bar" style="display:none">
+    <div>
+        <div style="font-size: 0.8rem; color: #666;">Total Estimado:</div>
+        <div style="font-size: 1.3rem; font-weight: bold; color: var(--accent);" id="cart-total">R$ 0,00</div>
     </div>
-    <button class="btn-checkout" onclick="openCheckout()">Finalizar Pedido</button>
+    <button class="btn-checkout" onclick="openCheckout()">Concluir Pedido</button>
 </div>
 
 <div class="modal" id="checkout-modal">
     <div class="modal-content">
         <span class="close-modal" onclick="closeCheckout()">&times;</span>
-        <h2>Resumo do Pedido</h2>
-        <ul class="cart-items-list" id="modal-cart-list"></ul>
-        <h3 style="text-align: right;">Total: <span id="modal-total">R$ 0,00</span></h3>
+        <h2 style="margin-top:0">Finalizar Reserva</h2>
         
-        <hr>
+        <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+            <ul class="cart-summary" id="modal-cart-list" style="list-style: none; padding: 0; margin: 0;"></ul>
+            <div style="text-align: right; font-weight: bold; margin-top: 10px; font-size: 1.2rem;">
+                Total: <span id="modal-total">R$ 0,00</span>
+            </div>
+        </div>
+
         <div class="form-group">
-            <label>Seu Nome:</label>
-            <input type="text" id="client-name" placeholder="Ex: João Silva">
+            <label>Seu Nome *</label>
+            <input type="text" id="client-name" placeholder="Ex: Rodrigo Souza">
         </div>
         <div class="form-group">
-            <label>Data do Evento:</label>
+            <label>Data do Evento *</label>
             <input type="date" id="event-date">
         </div>
         <div class="form-group">
-            <label>Endereço / Obs:</label>
-            <textarea id="client-obs" placeholder="Rua X, Bairro Y..."></textarea>
+            <label>Endereço / Observações</label>
+            <textarea id="client-obs" rows="3" placeholder="Rua das Acácias, 100 - Salão de Festas..."></textarea>
         </div>
         
-        <button class="btn-whatsapp" onclick="sendToWhatsapp()">Enviar Pedido no WhatsApp</button>
+        <button class="btn-whatsapp" onclick="sendToWhatsapp()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            Solicitar Orçamento
+        </button>
     </div>
 </div>
 
 <script>
     // --- CONFIGURAÇÃO ---
-    // COLOQUE SEU NÚMERO AQUI (formato internacional sem +)
-    const PHONE_NUMBER = "5521999999999"; 
+    const PHONE_NUMBER = "5521999999999"; // SEU NÚMERO AQUI
     
-    // SEUS PRODUTOS
+    // Lista de Produtos
+    // DICA: Para imagens, use "./img/nome-da-foto.jpg"
     const products = [
-        { id: 1, name: "Kit Karaokê Básico (Sem TV)", price: 250.00, img: "https://via.placeholder.com/300?text=Kit+Base" },
-        { id: 2, name: "Kit Game Retro (Sem TV)", price: 200.00, img: "https://via.placeholder.com/300?text=Kit+Game" },
-        { id: 3, name: "Adicional: TV 42 Polegadas", price: 100.00, img: "https://via.placeholder.com/300?text=TV+42" },
-        { id: 4, name: "Adicional: Caixa de Som", price: 80.00, img: "https://via.placeholder.com/300?text=Caixa+Som" },
-        { id: 5, name: "Adicional: Iluminação", price: 50.00, img: "https://via.placeholder.com/300?text=Luzes" }
+        { id: 1, name: "Kit Karaokê (S/ TV)", desc: "PC c/ sistema, 2 microfones, cabos e mixer.", price: 250.00, img: "https://via.placeholder.com/400x300?text=Karaoke+Base" },
+        { id: 2, name: "Kit Games Retrô (S/ TV)", desc: "Raspberry Pi, 2 controles, +10.000 jogos.", price: 200.00, img: "https://via.placeholder.com/400x300?text=Games+Retro" },
+        { id: 3, name: "TV 42 Polegadas", desc: "Smart TV com suporte de chão ajustável.", price: 100.00, img: "https://via.placeholder.com/400x300?text=TV+42" },
+        { id: 4, name: "Caixa de Som Ativa", desc: "Potência para ambientes internos/festas médias.", price: 80.00, img: "https://via.placeholder.com/400x300?text=Caixa+Som" },
+        { id: 5, name: "Kit Iluminação", desc: "Laser simples e Globo de luz LED.", price: 50.00, img: "https://via.placeholder.com/400x300?text=Luzes" }
     ];
 
-    let cart = [];
+    // Estado do Carrinho (Objeto para quantidade)
+    let cart = {}; 
+
+    // Inicialização
+    const container = document.getElementById('products-container');
+    const dateInput = document.getElementById('event-date');
+    
+    // Bloquear datas passadas
+    dateInput.min = new Date().toISOString().split("T")[0];
 
     // Renderizar Produtos
-    const container = document.getElementById('products-container');
-    products.forEach(p => {
-        container.innerHTML += `
-            <div class="product-card">
-                <img src="${p.img}" class="product-img" alt="${p.name}">
-                <h3>${p.name}</h3>
-                <p class="price">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
-                <button class="btn-add" onclick="addToCart(${p.id})">Adicionar ao Kit</button>
-            </div>
-        `;
-    });
-
-    // Adicionar ao Carrinho
-    function addToCart(id) {
-        const product = products.find(p => p.id === id);
-        cart.push(product);
-        updateCartUI();
-    }
-
-    // Atualizar Interface do Carrinho
-    function updateCartUI() {
-        const total = cart.reduce((sum, item) => sum + item.price, 0);
-        document.getElementById('cart-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        document.getElementById('cart-count').innerText = `${cart.length} itens`;
-        
-        // Atualiza lista do modal
-        const list = document.getElementById('modal-cart-list');
-        list.innerHTML = '';
-        cart.forEach((item, index) => {
-            list.innerHTML += `<li>${item.name} <span>R$ ${item.price.toFixed(2)}</span> <span style="color:red; cursor:pointer;" onclick="removeItem(${index})">(x)</span></li>`;
+    function renderProducts() {
+        container.innerHTML = '';
+        products.forEach(p => {
+            const qty = cart[p.id] ? cart[p.id].qty : 0;
+            
+            container.innerHTML += `
+                <div class="product-card">
+                    <div class="product-img-container">
+                        <img src="${p.img}" class="product-img" alt="${p.name}">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">${p.name}</div>
+                        <div class="card-desc">${p.desc}</div>
+                        <div class="card-footer">
+                            <div class="price">R$ ${p.price.toFixed(2).replace('.', ',')}</div>
+                            
+                            ${qty === 0 ? 
+                                `<button class="btn-qty btn-plus" style="width:auto; padding:0 15px; border-radius:20px" onclick="changeQty(${p.id}, 1)">Adicionar</button>` :
+                                `<div class="qty-control">
+                                    <button class="btn-qty btn-minus" onclick="changeQty(${p.id}, -1)">-</button>
+                                    <div class="qty-display">${qty}</div>
+                                    <button class="btn-qty btn-plus" onclick="changeQty(${p.id}, 1)">+</button>
+                                 </div>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
         });
+        updateCartBar();
+    }
+
+    // Alterar Quantidade
+    window.changeQty = function(id, delta) {
+        if (!cart[id]) {
+            const product = products.find(p => p.id === id);
+            cart[id] = { ...product, qty: 0 };
+        }
+        
+        cart[id].qty += delta;
+        
+        if (cart[id].qty <= 0) {
+            delete cart[id];
+        }
+        
+        renderProducts();
+    };
+
+    // Atualizar Barra Inferior
+    function updateCartBar() {
+        const items = Object.values(cart);
+        const total = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        
+        const bar = document.getElementById('cart-bar');
+        if (items.length > 0) {
+            bar.style.display = 'flex';
+            document.getElementById('cart-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        } else {
+            bar.style.display = 'none';
+        }
+    }
+
+    // Modal
+    window.openCheckout = function() {
+        const modal = document.getElementById('checkout-modal');
+        const list = document.getElementById('modal-cart-list');
+        const items = Object.values(cart);
+        const total = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+        list.innerHTML = '';
+        items.forEach(item => {
+            list.innerHTML += `
+                <li>
+                    <span>${item.qty}x ${item.name}</span>
+                    <span>R$ ${(item.price * item.qty).toFixed(2).replace('.', ',')}</span>
+                </li>`;
+        });
+        
         document.getElementById('modal-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        modal.style.display = 'flex';
     }
 
-    // Remover Item
-    function removeItem(index) {
-        cart.splice(index, 1);
-        updateCartUI();
-    }
-
-    // Controle do Modal
-    function openCheckout() {
-        if(cart.length === 0) { alert("Seu carrinho está vazio!"); return; }
-        document.getElementById('checkout-modal').style.display = 'flex';
-    }
-    function closeCheckout() {
+    window.closeCheckout = function() {
         document.getElementById('checkout-modal').style.display = 'none';
     }
 
-    // Enviar para WhatsApp
-    function sendToWhatsapp() {
+    // Enviar WhatsApp
+    window.sendToWhatsapp = function() {
         const name = document.getElementById('client-name').value;
         const date = document.getElementById('event-date').value;
         const obs = document.getElementById('client-obs').value;
 
         if(!name || !date) { alert("Por favor, preencha nome e data."); return; }
 
-        let message = `*NOVO PEDIDO DE LOCAÇÃO*\n\n`;
+        let message = `*SOLICITAÇÃO DE ORÇAMENTO - EQUIPE 360 RJ*\n`;
+        message += `----------------------------------\n`;
         message += `*Cliente:* ${name}\n`;
-        message += `*Data do Evento:* ${date.split('-').reverse().join('/')}\n`;
-        message += `*Obs/Endereço:* ${obs}\n\n`;
-        message += `*ITENS ESCOLHIDOS:*\n`;
+        message += `*Data:* ${date.split('-').reverse().join('/')}\n`;
+        if(obs) message += `*Obs:* ${obs}\n`;
+        message += `----------------------------------\n`;
+        message += `*ITENS DESEJADOS:*\n`;
         
-        cart.forEach(item => {
-            message += `- ${item.name}: R$ ${item.price.toFixed(2)}\n`;
+        const items = Object.values(cart);
+        items.forEach(item => {
+            message += `✅ ${item.qty}x ${item.name} (R$ ${(item.price * item.qty).toFixed(2)})\n`;
         });
 
-        const total = cart.reduce((sum, item) => sum + item.price, 0);
-        message += `\n*VALOR TOTAL ESTIMADO: R$ ${total.toFixed(2)}*`;
+        const total = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        message += `\n💰 *TOTAL ESTIMADO: R$ ${total.toFixed(2)}*`;
+        message += `\n\n_Aguardo confirmação da disponibilidade._`;
 
-        const url = `https://wa.me/${5521988550613}?text=${encodeURIComponent(message)}`;
+        const url = `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
         window.open(url, '_blank');
     }
-</script>
 
+    // Render Inicial
+    renderProducts();
+
+</script>
 </body>
 </html>
