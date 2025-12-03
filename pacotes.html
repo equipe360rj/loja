@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacotes Prontos | Equipe 360 RJ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reutilizando o estilo base para consistência visual */
+        :root { --primary: #25D366; --accent: #0056b3; --dark: #222; --bg: #f8f9fa; --white: #ffffff; }
+        body { font-family: 'Roboto', sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 50px; }
+        
+        .hero { background: linear-gradient(135deg, #0056b3, #004494); color: white; padding: 40px 20px; text-align: center; }
+        .hero h1 { margin: 0; }
+        .back-link { color: rgba(255,255,255,0.8); text-decoration: none; display: inline-block; margin-top: 10px; }
+        
+        .container { max-width: 1000px; margin: 20px auto; padding: 20px; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        
+        /* Card de Pacote Destacado */
+        .package-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; flex-direction: column; border: 1px solid #eee; position: relative; }
+        .featured-tag { position: absolute; top: 15px; right: 15px; background: #ffc107; color: #333; padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        
+        .pkg-img { width: 100%; height: 200px; object-fit: cover; background: #ddd; }
+        .pkg-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .pkg-title { font-size: 1.4rem; font-weight: bold; color: var(--accent); margin-bottom: 10px; }
+        .pkg-list { list-style: none; padding: 0; margin: 0 0 20px 0; color: #555; font-size: 0.95rem; }
+        .pkg-list li { padding: 5px 0; border-bottom: 1px dashed #eee; display: flex; align-items: center; }
+        .pkg-list li:before { content: '✓'; color: var(--primary); font-weight: bold; margin-right: 10px; }
+        
+        .pkg-price { font-size: 1.5rem; font-weight: bold; color: #333; margin-top: auto; }
+        .btn-reserve { background-color: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; font-size: 0.9rem; transition: background 0.2s; }
+        .btn-reserve:hover { background-color: #1ebc57; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>Pacotes Prontos</h1>
+    <a href="index.html" class="back-link">&larr; Voltar para o Início</a>
+</div>
+
+<div class="container">
+    <div class="products-grid">
+        
+        <div class="package-card">
+            <img src="https://via.placeholder.com/400x250?text=Festa+Basica" class="pkg-img">
+            <div class="pkg-body">
+                <div class="pkg-title">Combo Iniciante</div>
+                <ul class="pkg-list">
+                    <li>Sistema de Karaokê</li>
+                    <li>2 Microfones com fio</li>
+                    <li>Cabos necessários</li>
+                    <li>Sem TV/Som (Usa o do cliente)</li>
+                </ul>
+                <div class="pkg-price">R$ 250,00</div>
+                <button class="btn-reserve" onclick="reservePackage('Combo Iniciante', 250)">Reservar este Pacote</button>
+            </div>
+        </div>
+
+        <div class="package-card">
+            <span class="featured-tag">MAIS PEDIDO</span>
+            <img src="https://via.placeholder.com/400x250?text=Festa+Completa" class="pkg-img">
+            <div class="pkg-body">
+                <div class="pkg-title">Festa Completa</div>
+                <ul class="pkg-list">
+                    <li>Sistema de Karaokê Pro</li>
+                    <li>2 Microfones</li>
+                    <li>TV 42 Polegadas + Suporte</li>
+                    <li>Caixa de Som Ativa</li>
+                </ul>
+                <div class="pkg-price">R$ 450,00</div>
+                <button class="btn-reserve" onclick="reservePackage('Festa Completa', 450)">Reservar este Pacote</button>
+            </div>
+        </div>
+
+        <div class="package-card">
+            <img src="https://via.placeholder.com/400x250?text=Mega+Evento" class="pkg-img">
+            <div class="pkg-body">
+                <div class="pkg-title">Mega Evento</div>
+                <ul class="pkg-list">
+                    <li>Karaokê + Game Retrô</li>
+                    <li>4 Microfones</li>
+                    <li>Projetor ou TV 50"</li>
+                    <li>Som Potente + Iluminação</li>
+                </ul>
+                <div class="pkg-price">R$ 700,00</div>
+                <button class="btn-reserve" onclick="reservePackage('Mega Evento', 700)">Reservar este Pacote</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // --- CONFIGURAÇÃO ---
+    const PHONE_NUMBER = "5521999999999"; // SEU NÚMERO AQUI
+
+    function reservePackage(packageName, price) {
+        // Pede a data de forma simples (prompt nativo para ser rápido, ou pode usar modal igual o outro)
+        const date = prompt("Para qual data seria o evento? (Dia/Mês)");
+        if(!date) return;
+
+        let message = `*OLÁ, QUERO RESERVAR UM PACOTE PRONTO*\n`;
+        message += `----------------------------------\n`;
+        message += `📦 *Pacote:* ${packageName}\n`;
+        message += `💰 *Valor:* R$ ${price.toFixed(2)}\n`;
+        message += `📅 *Data:* ${date}\n`;
+        message += `----------------------------------\n`;
+        message += `Gostaria de saber a disponibilidade.`;
+
+        const url = `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    }
+</script>
+
+</body>
+</html>
